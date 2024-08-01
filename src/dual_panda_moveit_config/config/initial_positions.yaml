@@ -1,0 +1,17 @@
+# Default initial positions for dual_panda's ros2_control fake system
+
+initial_positions:
+  L_panda_joint1: 0
+  L_panda_joint2: 0
+  L_panda_joint3: 0
+  L_panda_joint4: 0
+  L_panda_joint5: 0
+  L_panda_joint6: 0
+  L_panda_joint7: 0
+  R_panda_joint1: 0
+  R_panda_joint2: 0
+  R_panda_joint3: 0
+  R_panda_joint4: 0
+  R_panda_joint5: 0
+  R_panda_joint6: 0
+  R_panda_joint7: 0

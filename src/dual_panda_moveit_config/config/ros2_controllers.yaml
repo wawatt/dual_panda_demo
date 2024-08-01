@@ -1,0 +1,69 @@
+# This config file is used by ros2_control
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    L_manipulator_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    R_manipulator_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    dual_manipulator_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+L_manipulator_controller:
+  ros__parameters:
+    joints:
+      - L_panda_joint1
+      - L_panda_joint2
+      - L_panda_joint3
+      - L_panda_joint4
+      - L_panda_joint5
+      - L_panda_joint6
+      - L_panda_joint7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+R_manipulator_controller:
+  ros__parameters:
+    joints:
+      - R_panda_joint1
+      - R_panda_joint2
+      - R_panda_joint3
+      - R_panda_joint4
+      - R_panda_joint5
+      - R_panda_joint6
+      - R_panda_joint7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+dual_manipulator_controller:
+  ros__parameters:
+    joints:
+      - L_panda_joint1
+      - L_panda_joint2
+      - L_panda_joint3
+      - L_panda_joint4
+      - L_panda_joint5
+      - L_panda_joint6
+      - L_panda_joint7
+      - R_panda_joint1
+      - R_panda_joint2
+      - R_panda_joint3
+      - R_panda_joint4
+      - R_panda_joint5
+      - R_panda_joint6
+      - R_panda_joint7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity

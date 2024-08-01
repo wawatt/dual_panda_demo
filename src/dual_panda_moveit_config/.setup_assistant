@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: dual_panda_description
+    relative_path: urdf/dual_panda.urdf.xacro
+  srdf:
+    relative_path: config/dual_panda.srdf
+  package_settings:
+    author_name: wawatt
+    author_email: 1576055173@qq.com
+    generated_timestamp: 1722522688
