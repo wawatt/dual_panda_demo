@@ -29,7 +29,7 @@ def generate_launch_description():
     # RViz
     rviz_config = os.path.join(
         get_package_share_directory("dual_panda_moveit_config"),
-        "launch/moveit.rviz",
+        "config/moveit.rviz",
     )
     rviz_node = Node(
         package="rviz2",
@@ -85,8 +85,8 @@ def generate_launch_description():
     load_controllers = []
     for controller in [
         "joint_state_broadcaster",
-        "L_manipulator_controller",
-        "R_manipulator_controller",
+        # "L_manipulator_controller",
+        # "R_manipulator_controller",
         "dual_manipulator_controller"
     ]:
         load_controllers += [

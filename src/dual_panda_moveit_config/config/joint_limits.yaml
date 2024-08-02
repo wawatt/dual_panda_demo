@@ -10,71 +10,72 @@ default_acceleration_scaling_factor: 0.1
 joint_limits:
   L_panda_joint1:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 3.75
   L_panda_joint2:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 1.875
   L_panda_joint3:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 2.5
   L_panda_joint4:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 3.125
   L_panda_joint5:
     has_velocity_limits: true
-    max_velocity: 2.871
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.6100
+    has_acceleration_limits: true
+    max_acceleration: 3.75
   L_panda_joint6:
     has_velocity_limits: true
-    max_velocity: 2.871
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.6100
+    has_acceleration_limits: true
+    max_acceleration: 5.0
   L_panda_joint7:
     has_velocity_limits: true
-    max_velocity: 2.871
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.6100
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+
   R_panda_joint1:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 3.75
   R_panda_joint2:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 1.875
   R_panda_joint3:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 2.5
   R_panda_joint4:
     has_velocity_limits: true
-    max_velocity: 2.3925000000000001
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.1750
+    has_acceleration_limits: true
+    max_acceleration: 3.125
   R_panda_joint5:
     has_velocity_limits: true
-    max_velocity: 2.871
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.6100
+    has_acceleration_limits: true
+    max_acceleration: 3.75
   R_panda_joint6:
     has_velocity_limits: true
-    max_velocity: 2.871
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.6100
+    has_acceleration_limits: true
+    max_acceleration: 5.0
   R_panda_joint7:
     has_velocity_limits: true
-    max_velocity: 2.871
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 2.6100
+    has_acceleration_limits: true
+    max_acceleration: 5.0
