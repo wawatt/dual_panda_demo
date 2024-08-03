@@ -83,7 +83,8 @@ int main(int argc, char** argv)
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
 
   moveit::planning_interface::MoveGroupInterface move_group(move_group_node, PLANNING_GROUP);
-
+  move_group.setNumPlanningAttempts(3);
+  move_group.setPlanningTime(1);
 
   // We will use the
   // :moveit_codedir:`PlanningSceneInterface<moveit_ros/planning_interface/planning_scene_interface/include/moveit/planning_scene_interface/planning_scene_interface.h>`
@@ -152,10 +153,16 @@ int main(int argc, char** argv)
   target_pose_R.position.x = 0.28;
   target_pose_R.position.y = -0.2-0.5;
   target_pose_R.position.z = 0.5;
-  move_group.setPlanningTime(1);
+
   move_group.setStartStateToCurrentState();
+  // move_group.setPlanningPipelineId
+  // move_group.setPlannerId
+  move_group.setGoalPositionTolerance(0.001);
+  move_group.setGoalOrientationTolerance(0.001);
+  move_group.clearPoseTargets();
   move_group.setPoseTarget(target_pose_L, "L_panda_link8");
   move_group.setPoseTarget(target_pose_R, "R_panda_link8");
+
   // Now, we call the planner to compute the plan and visualize it.
   // Note that we are just planning, not asking move_group
   // to actually move the robot.
@@ -200,41 +207,45 @@ int main(int argc, char** argv)
   /* Uncomment below line when working with a real robot */
   /* move_group.move(); */
 
-  // // Planning to a joint-space goal
-  // // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  // //
-  // // Let's set a joint space goal and move towards it.  This will replace the
-  // // pose target we set above.
-  // //
-  // // To start, we'll create an pointer that references the current robot's state.
-  // // RobotState is the object that contains all the current position/velocity/acceleration data.
-  // moveit::core::RobotStatePtr current_state = move_group.getCurrentState(10);
-  // //
-  // // Next get the current set of joint values for the group.
-  // std::vector<double> joint_group_positions;
-  // current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+  // Planning to a joint-space goal
+  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  //
+  // Let's set a joint space goal and move towards it.  This will replace the
+  // pose target we set above.
+  //
+  // To start, we'll create an pointer that references the current robot's state.
+  // RobotState is the object that contains all the current position/velocity/acceleration data.
+  moveit::core::RobotStatePtr current_state = move_group.getCurrentState(10);
+  //
+  // Next get the current set of joint values for the group.
+  std::vector<double> joint_group_positions;
+  current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
-  // // Now, let's modify one of the joints, plan to the new joint space goal, and visualize the plan.
-  // joint_group_positions[0] = -1.0;  // radians
-  // move_group.setJointValueTarget(joint_group_positions);
+  // Now, let's modify one of the joints, plan to the new joint space goal, and visualize the plan.
+  joint_group_positions[0] = -1.0;  // radians
+  joint_group_positions[0+7] = -1.0;  // radians
+  
+  move_group.clearPoseTargets();
+  move_group.setJointValueTarget(joint_group_positions);
 
-  // // We lower the allowed maximum velocity and acceleration to 5% of their maximum.
-  // // The default values are 10% (0.1).
-  // // Set your preferred defaults in the joint_limits.yaml file of your robot's moveit_config
-  // // or set explicit factors in your code if you need your robot to move faster.
-  // move_group.setMaxVelocityScalingFactor(0.05);
-  // move_group.setMaxAccelerationScalingFactor(0.05);
+  // We lower the allowed maximum velocity and acceleration to 5% of their maximum.
+  // The default values are 10% (0.1).
+  // Set your preferred defaults in the joint_limits.yaml file of your robot's moveit_config
+  // or set explicit factors in your code if you need your robot to move faster.
+  move_group.setMaxVelocityScalingFactor(0.05);
+  move_group.setMaxAccelerationScalingFactor(0.05);
 
-  // success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
-  // RCLCPP_INFO(LOGGER, "Visualizing plan 2 (joint space goal) %s", success ? "" : "FAILED");
+  success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
+  RCLCPP_INFO(LOGGER, "Visualizing plan 2 (joint space goal) %s", success ? "" : "FAILED");
 
-  // // Visualize the plan in RViz:
-  // visual_tools.deleteAllMarkers();
-  // visual_tools.publishText(text_pose, "Joint_Space_Goal", rvt::WHITE, rvt::XLARGE);
-  // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-  // visual_tools.trigger();
-  // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
-
+#ifdef RVIZ_VIS
+  // Visualize the plan in RViz:
+  visual_tools.deleteAllMarkers();
+  visual_tools.publishText(text_pose, "Joint_Space_Goal", rvt::WHITE, rvt::XLARGE);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.trigger();
+  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+#endif
   // // Planning with Path Constraints
   // // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   // //
