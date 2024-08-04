@@ -100,7 +100,7 @@ int main(int argc, char** argv)
   // ^^^^^^^^^^^^^
 #ifdef RVIZ_VIS
   namespace rvt = rviz_visual_tools;
-  moveit_visual_tools::MoveItVisualTools visual_tools(move_group_node, "world", "rvt_my_move_group",
+  moveit_visual_tools::MoveItVisualTools visual_tools(move_group_node, "world", "dual_panda_demo",
                                                       move_group.getRobotModel());
 
   visual_tools.deleteAllMarkers();
@@ -185,10 +185,12 @@ int main(int argc, char** argv)
   // ^^^^^^^^^^^^^^^^^
   // We can also visualize the plan as a line with markers in RViz.
   RCLCPP_INFO(LOGGER, "Visualizing plan 1 as trajectory line");
-  visual_tools.publishAxisLabeled(target_pose_L, "pose1");
-  visual_tools.publishAxisLabeled(target_pose_R, "pose1");
+  visual_tools.publishAxisLabeled(target_pose_L, "pose_L");
+  visual_tools.publishAxisLabeled(target_pose_R, "pose_R");
   visual_tools.publishText(text_pose, "Pose_Goal", rvt::WHITE, rvt::XLARGE);
-  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("L_panda_link8"), joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("R_panda_link8"), joint_model_group);
   visual_tools.trigger();
   visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 #endif
@@ -242,7 +244,9 @@ int main(int argc, char** argv)
   // Visualize the plan in RViz:
   visual_tools.deleteAllMarkers();
   visual_tools.publishText(text_pose, "Joint_Space_Goal", rvt::WHITE, rvt::XLARGE);
-  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("L_panda_link8"), joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("R_panda_link8"), joint_model_group);
   visual_tools.trigger();
   visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 #endif
@@ -394,7 +398,8 @@ int main(int argc, char** argv)
   visual_tools.publishText(text_pose, "Clear_Goal", rvt::WHITE, rvt::XLARGE);
   visual_tools.publishAxisLabeled(another_pose_L, "goal_L");
   visual_tools.publishAxisLabeled(another_pose_R, "goal_R");
-  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("L_panda_link8"), joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("R_panda_link8"), joint_model_group);
   visual_tools.trigger();
   visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 #endif
@@ -448,7 +453,8 @@ int main(int argc, char** argv)
   RCLCPP_INFO(LOGGER, "Visualizing plan 6 (pose goal move around cuboid) %s", success ? "" : "FAILED");
 #ifdef RVIZ_VIS
   visual_tools.publishText(text_pose, "Obstacle_Goal", rvt::WHITE, rvt::XLARGE);
-  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("L_panda_link8"), joint_model_group);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, move_group.getRobotModel()->getLinkModel("R_panda_link8"), joint_model_group);
   visual_tools.trigger();
   visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the plan is complete");
 #endif

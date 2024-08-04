@@ -295,7 +295,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /rvt_my_move_group
+        Value: /dual_panda_demo
       Value: true
   Enabled: true
   Global Options:
