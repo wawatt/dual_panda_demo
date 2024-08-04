@@ -234,8 +234,8 @@ int main(int argc, char** argv)
   // or set explicit factors in your code if you need your robot to move faster.
   move_group.setMaxVelocityScalingFactor(0.05);
   move_group.setMaxAccelerationScalingFactor(0.05);
-
   success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
+  RCLCPP_INFO(LOGGER, "Visualizing plan 2 (joint space goal) %f seconds", my_plan.planning_time_);
   RCLCPP_INFO(LOGGER, "Visualizing plan 2 (joint space goal) %s", success ? "" : "FAILED");
 
 #ifdef RVIZ_VIS
@@ -368,85 +368,94 @@ int main(int argc, char** argv)
   // // You can execute a trajectory like this.
   // /* move_group.execute(trajectory); */
 
-  // // Adding objects to the environment
-  // // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  // //
-  // // First, let's plan to another simple goal with no objects in the way.
-  // move_group.setStartState(*move_group.getCurrentState());
-  // geometry_msgs::msg::Pose another_pose;
-  // another_pose.orientation.w = 0;
-  // another_pose.orientation.x = -1.0;
-  // another_pose.position.x = 0.7;
-  // another_pose.position.y = 0.0;
-  // another_pose.position.z = 0.59;
-  // move_group.setPoseTarget(another_pose);
+  // Adding objects to the environment
+  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  //
+  // First, let's plan to another simple goal with no objects in the way.
+  move_group.setStartState(*move_group.getCurrentState());
+  geometry_msgs::msg::Pose another_pose_L, another_pose_R;
+  another_pose_L.orientation.w = 0;
+  another_pose_L.orientation.x = -1.0;
+  another_pose_L.position.x = 0.7;
+  another_pose_L.position.y = 0.0+0.5;
+  another_pose_L.position.z = 0.59;
+  another_pose_R = another_pose_L;
+  another_pose_R.position.y -= 1.0;
+  move_group.clearPoseTargets();
+  move_group.setPoseTarget(another_pose_L, "L_panda_link8");
+  move_group.setPoseTarget(another_pose_R, "R_panda_link8");
 
-  // success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
-  // RCLCPP_INFO(LOGGER, "Visualizing plan 5 (with no obstacles) %s", success ? "" : "FAILED");
+  success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
+  RCLCPP_INFO(LOGGER, "Visualizing plan 5 (with no obstacles) %f seconds", my_plan.planning_time_);
+  RCLCPP_INFO(LOGGER, "Visualizing plan 5 (with no obstacles) %s", success ? "" : "FAILED");
 
-  // visual_tools.deleteAllMarkers();
-  // visual_tools.publishText(text_pose, "Clear_Goal", rvt::WHITE, rvt::XLARGE);
-  // visual_tools.publishAxisLabeled(another_pose, "goal");
-  // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-  // visual_tools.trigger();
-  // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+#ifdef RVIZ_VIS
+  visual_tools.deleteAllMarkers();
+  visual_tools.publishText(text_pose, "Clear_Goal", rvt::WHITE, rvt::XLARGE);
+  visual_tools.publishAxisLabeled(another_pose_L, "goal_L");
+  visual_tools.publishAxisLabeled(another_pose_R, "goal_R");
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.trigger();
+  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+#endif
+  // The result may look like this:
+  //
+  // .. image:: ./move_group_interface_tutorial_clear_path.gif
+  //    :alt: animation showing the arm moving relatively straight toward the goal
+  //
+  // Now, let's define a collision object ROS message for the robot to avoid.
+  moveit_msgs::msg::CollisionObject collision_object;
+  collision_object.header.frame_id = move_group.getPlanningFrame();
 
-  // // The result may look like this:
-  // //
-  // // .. image:: ./move_group_interface_tutorial_clear_path.gif
-  // //    :alt: animation showing the arm moving relatively straight toward the goal
-  // //
-  // // Now, let's define a collision object ROS message for the robot to avoid.
-  // moveit_msgs::msg::CollisionObject collision_object;
-  // collision_object.header.frame_id = move_group.getPlanningFrame();
+  // The id of the object is used to identify it.
+  collision_object.id = "box1";
 
-  // // The id of the object is used to identify it.
-  // collision_object.id = "box1";
+  // Define a box to add to the world.
+  shape_msgs::msg::SolidPrimitive primitive;
+  primitive.type = primitive.BOX;
+  primitive.dimensions.resize(3);
+  primitive.dimensions[primitive.BOX_X] = 0.1;
+  primitive.dimensions[primitive.BOX_Y] = 1.5;
+  primitive.dimensions[primitive.BOX_Z] = 0.5;
 
-  // // Define a box to add to the world.
-  // shape_msgs::msg::SolidPrimitive primitive;
-  // primitive.type = primitive.BOX;
-  // primitive.dimensions.resize(3);
-  // primitive.dimensions[primitive.BOX_X] = 0.1;
-  // primitive.dimensions[primitive.BOX_Y] = 1.5;
-  // primitive.dimensions[primitive.BOX_Z] = 0.5;
+  // Define a pose for the box (specified relative to frame_id).
+  geometry_msgs::msg::Pose box_pose;
+  box_pose.orientation.w = 1.0;
+  box_pose.position.x = 0.48;
+  box_pose.position.y = 0.0;
+  box_pose.position.z = 1.05;
 
-  // // Define a pose for the box (specified relative to frame_id).
-  // geometry_msgs::msg::Pose box_pose;
-  // box_pose.orientation.w = 1.0;
-  // box_pose.position.x = 0.48;
-  // box_pose.position.y = 0.0;
-  // box_pose.position.z = 0.25;
+  collision_object.primitives.push_back(primitive);
+  collision_object.primitive_poses.push_back(box_pose);
+  collision_object.operation = collision_object.ADD;
 
-  // collision_object.primitives.push_back(primitive);
-  // collision_object.primitive_poses.push_back(box_pose);
-  // collision_object.operation = collision_object.ADD;
+  std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
+  collision_objects.push_back(collision_object);
 
-  // std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
-  // collision_objects.push_back(collision_object);
+  // Now, let's add the collision object into the world
+  // (using a vector that could contain additional objects)
+  RCLCPP_INFO(LOGGER, "Add an object into the world");
+  planning_scene_interface.addCollisionObjects(collision_objects);
 
-  // // Now, let's add the collision object into the world
-  // // (using a vector that could contain additional objects)
-  // RCLCPP_INFO(LOGGER, "Add an object into the world");
-  // planning_scene_interface.addCollisionObjects(collision_objects);
-
-  // // Show text in RViz of status and wait for MoveGroup to receive and process the collision object message
-  // visual_tools.publishText(text_pose, "Add_object", rvt::WHITE, rvt::XLARGE);
-  // visual_tools.trigger();
-  // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to once the collision object appears in RViz");
-
+#ifdef RVIZ_VIS
+  // Show text in RViz of status and wait for MoveGroup to receive and process the collision object message
+  visual_tools.publishText(text_pose, "Add_object", rvt::WHITE, rvt::XLARGE);
+  visual_tools.trigger();
+  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to once the collision object appears in RViz");
+#endif
   // // Now, when we plan a trajectory it will avoid the obstacle.
-  // success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
-  // RCLCPP_INFO(LOGGER, "Visualizing plan 6 (pose goal move around cuboid) %s", success ? "" : "FAILED");
-  // visual_tools.publishText(text_pose, "Obstacle_Goal", rvt::WHITE, rvt::XLARGE);
-  // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-  // visual_tools.trigger();
-  // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the plan is complete");
-
-  // // The result may look like this:
-  // //
-  // // .. image:: ./move_group_interface_tutorial_avoid_path.gif
-  // //    :alt: animation showing the arm moving avoiding the new obstacle
+  success = (move_group.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
+  RCLCPP_INFO(LOGGER, "Visualizing plan 6 (pose goal move around cuboid) %s", success ? "" : "FAILED");
+#ifdef RVIZ_VIS
+  visual_tools.publishText(text_pose, "Obstacle_Goal", rvt::WHITE, rvt::XLARGE);
+  visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools.trigger();
+  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the plan is complete");
+#endif
+  // The result may look like this:
+  //
+  // .. image:: ./move_group_interface_tutorial_avoid_path.gif
+  //    :alt: animation showing the arm moving avoiding the new obstacle
   // //
   // // Attaching objects to the robot
   // // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
